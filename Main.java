@@ -6,6 +6,12 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.List;
 
+import invoices.model.InvoiceHeader;
+import invoices.model.InvoicesTableModel;
+import invoices.controller.InvoicesFiles;
+import invoices.view.InvoicesView;
+import invoices.view.OneInvoiceView;
+
 public class Main {
     public static void main(String[] a) {
         JFrame frame = new JFrame("Invoices");
@@ -35,20 +41,20 @@ public class Main {
 
         OneInvoiceView oneInvoiceView = new OneInvoiceView();
         oneInvoiceView.setOnCancelListener(() -> splitPane.setRightComponent(null));
-        oneInvoiceView.setOnSaveListener((Invoice invoice) -> {
+        oneInvoiceView.setOnSaveListener((InvoiceHeader invoice) -> {
             invoice.removeUnnamedItems();
             invoicesTableModel.addOrUpdateInvoice(invoice);
             splitPane.setRightComponent(null);
         });
 
-        invoicesView.setInvoiceClickListener((Invoice clickedInvoice) -> {
-            oneInvoiceView.setInvoice(new Invoice(clickedInvoice));
+        invoicesView.setInvoiceClickListener((InvoiceHeader clickedInvoice) -> {
+            oneInvoiceView.setInvoice(new InvoiceHeader(clickedInvoice));
             splitPane.setRightComponent(oneInvoiceView.toJPanel());
         });
-        invoicesView.setInvoiceRemoveListener((Invoice clickedInvoice) -> {
+        invoicesView.setInvoiceRemoveListener((InvoiceHeader clickedInvoice) -> {
             splitPane.setRightComponent(null);
         });
-        invoicesView.setInvoiceAddListener((Invoice clickedInvoice) -> {
+        invoicesView.setInvoiceAddListener((InvoiceHeader clickedInvoice) -> {
             oneInvoiceView.setInvoice(clickedInvoice);
             splitPane.setRightComponent(oneInvoiceView.toJPanel());
         });
@@ -79,7 +85,7 @@ public class Main {
         return invoicesLoader;
     }
 
-    private static void saveInvoices(List<Invoice> invoices) {
+    private static void saveInvoices(List<InvoiceHeader> invoices) {
         try {
             InvoicesFiles.save(invoices);
         }
